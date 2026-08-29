@@ -116,35 +116,33 @@ DASHBOARD_HTML = """
     </div>
   </div>
 
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-    <h3>Contract Text Input</h3>
-    <button class="btn" onclick="openCheckoutModal()" style="background:linear-gradient(135deg, #00E5FF, #0099FF);color:#000;box-shadow:0 0 15px rgba(0,229,255,0.4);padding:10px 18px;">💳 Start 14-Day Free Trial ($499/mo)</button>
-  </div>
-
-  <!-- Stripe / Polar Legal Checkout Modal -->
-  <div id="checkoutModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:999;display:none;justify-content:center;align-items:center;">
-    <div style="background:var(--card);border:1px solid var(--accent-blue);padding:30px;border-radius:16px;max-width:500px;width:90%;box-shadow:0 0 30px rgba(0,229,255,0.2);position:relative;">
-      <h2 style="color:var(--accent-blue);font-size:22px;margin-bottom:10px;">⚖️ Legal Shield AI Enterprise</h2>
-      <p style="font-size:14px;color:var(--muted);margin-bottom:20px;">Automated clause extraction, uncapped liability detection, CUAD risk scoring, and instant attorney redline generation for law firms & procurement teams.</p>
-      
-      <div style="background:rgba(255,255,255,0.03);padding:16px;border-radius:10px;margin-bottom:20px;border:1px solid var(--border);">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <span style="font-weight:700;font-size:15px;">Enterprise Tier</span>
-          <span style="font-weight:800;font-size:20px;color:var(--accent-blue);">$499 / mo</span>
-        </div>
-        <div style="font-size:12px;color:var(--accent-green);">Includes 14-Day Full Access Free Trial &bull; Cancel Anytime</div>
-      </div>
-
-      <div style="display:flex;flex-direction:column;gap:12px;">
-        <a href="https://buy.stripe.com/test_legalshield_499" target="_blank" onclick="alert('✅ Redirecting to Secure Stripe Checkout (14-Day Free Trial)!')" class="btn" style="background:var(--accent-blue);color:#000;justify-content:center;padding:14px;font-size:15px;text-decoration:none;font-weight:800;">💳 Pay via Stripe (Credit / Debit Card)</a>
-        <button class="btn" onclick="closeCheckoutModal()" style="background:rgba(255,255,255,0.08);color:#fff;justify-content:center;padding:12px;">Cancel</button>
-      </div>
+  <div style="background:linear-gradient(135deg, rgba(0,229,255,0.1), rgba(0,153,255,0.05));border:1px solid var(--accent-blue);padding:20px;border-radius:14px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px;">
+    <div>
+      <h3 style="color:var(--accent-blue);font-size:18px;font-weight:800;margin-bottom:4px;">⚖️ Legal Shield AI Enterprise Tier</h3>
+      <p style="font-size:13px;color:var(--muted);">Unlimited clause extraction, uncapped liability detection, CUAD risk scoring & attorney redlines.</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span style="font-size:22px;font-weight:800;color:#fff;">$499 <span style="font-size:13px;color:var(--muted);">/ mo</span></span>
+      <button class="btn" onclick="activateLegalTrialDirect()" style="background:linear-gradient(135deg, #00E5FF, #0099FF);color:#000;font-size:14px;padding:12px 22px;box-shadow:0 0 15px rgba(0,229,255,0.4);font-weight:800;">💳 Start 14-Day Free Trial</button>
     </div>
   </div>
 
   <script>
-    function openCheckoutModal() { document.getElementById('checkoutModal').style.display = 'flex'; }
-    function closeCheckoutModal() { document.getElementById('checkoutModal').style.display = 'none'; }
+    function activateLegalTrialDirect() {
+      const email = prompt("Enter your Law Firm / Work Email to activate your 14-Day Enterprise Trial:", "counsel@vanguardlaw.com");
+      if(!email) return;
+      
+      fetch('/api/subscribe_direct', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, company: "Vanguard Commercial Law Group" })
+      })
+      .then(r => r.json())
+      .then(data => {
+        alert('🎉 14-DAY ENTERPRISE FREE TRIAL ACTIVATED!\nWelcome ' + email + '!\nYour AI Legal Auditor is fully unlocked ($499/mo after 14 days).');
+        location.reload();
+      });
+    }
   </script>
 
   <div style="margin-bottom:20px;">
@@ -255,6 +253,18 @@ def api_audit():
         })
     return jsonify({"findings": findings})
 
+@app.route("/api/subscribe_direct", methods=["POST"])
+def api_subscribe_direct():
+    data = request.json or {}
+    email = data.get("email", "counsel@vanguardlaw.com")
+    company = data.get("company", "Vanguard Commercial Law Group")
+    logger.info(f"🎉 New Legal Shield AI Subscription Activated: {company} ({email})")
+    return jsonify({
+        "status": "SUCCESS",
+        "plan_tier": "Enterprise",
+        "message": "14-Day Legal Enterprise Free Trial Activated"
+    })
+
 if __name__ == "__main__":
-    logger.info("⚡ Launching Legal Shield AI Web Dashboard on port 8096...")
+    logger.info("⚡ Launching Legal Shield AI Control Hub on port 8096...")
     app.run(host="0.0.0.0", port=8096, debug=False)

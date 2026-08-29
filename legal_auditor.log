@@ -1,11 +1,9 @@
-2026-08-29 09:22:45,092 - INFO - ⚡ Launching Legal Shield AI Web Dashboard on port 8096...
+2026-08-29 09:49:40,089 - INFO - ⚡ Launching Legal Shield AI Control Hub on port 8096...
  * Serving Flask app 'app'
  * Debug mode: off
-2026-08-29 09:22:45,178 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+2026-08-29 09:49:40,401 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on all addresses (0.0.0.0)
  * Running on http://127.0.0.1:8096
  * Running on http://10.10.0.110:8096
-2026-08-29 09:22:45,178 - INFO - [33mPress CTRL+C to quit[0m
-2026-08-29 09:22:47,918 - INFO - 127.0.0.1 - - [29/Aug/2026 09:22:47] "GET / HTTP/1.1" 200 -
-2026-08-29 09:24:32,878 - INFO - 127.0.0.1 - - [29/Aug/2026 09:24:32] "GET / HTTP/1.1" 200 -
-2026-08-29 09:24:34,673 - INFO - 127.0.0.1 - - [29/Aug/2026 09:24:34] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-08-29 09:49:40,402 - INFO - [33mPress CTRL+C to quit[0m
+2026-08-29 09:49:42,865 - INFO - 127.0.0.1 - - [29/Aug/2026 09:49:42] "GET / HTTP/1.1" 200 -
