@@ -253,17 +253,62 @@ def api_audit():
         })
     return jsonify({"findings": findings})
 
-@app.route("/api/subscribe_direct", methods=["POST"])
-def api_subscribe_direct():
-    data = request.json or {}
-    email = data.get("email", "counsel@vanguardlaw.com")
-    company = data.get("company", "Vanguard Commercial Law Group")
-    logger.info(f"🎉 New Legal Shield AI Subscription Activated: {company} ({email})")
-    return jsonify({
-        "status": "SUCCESS",
-        "plan_tier": "Enterprise",
-        "message": "14-Day Legal Enterprise Free Trial Activated"
-    })
+CHECKOUT_HTML = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>⚖️ Legal Shield AI | Start 14-Day Enterprise Trial</title>
+  <style>
+    body { background: #090C15; color: #F0F4F8; font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+    .card { background: #111625; border: 1px solid #00E5FF; padding: 36px; border-radius: 16px; max-width: 480px; width: 90%; box-shadow: 0 0 30px rgba(0,229,255,0.2); }
+    h2 { color: #00E5FF; font-size: 24px; margin-bottom: 8px; }
+    p { color: #8E9BAE; font-size: 13px; margin-bottom: 20px; line-height: 1.5; }
+    .price-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 16px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+    input { width: 100%; padding: 12px; border-radius: 8px; background: #090C15; border: 1px solid rgba(255,255,255,0.1); color: #fff; font-size: 14px; margin-bottom: 14px; box-sizing: border-box; }
+    .btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #00E5FF, #0099FF); color: #000; border: none; border-radius: 10px; font-weight: 800; font-size: 15px; cursor: pointer; }
+    .btn:hover { opacity: 0.9; }
+    .back-link { display: block; text-align: center; margin-top: 16px; color: #8E9BAE; text-decoration: none; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>⚖️ Legal Shield AI Enterprise</h2>
+    <p>Automated clause extraction, uncapped liability detection, CUAD risk scoring, and instant attorney redline generation for law firms & procurement teams.</p>
+    
+    <div class="price-box">
+      <span style="font-weight:700;">Legal Enterprise Tier</span>
+      <span style="font-weight:800;font-size:22px;color:#00E5FF;">$499 / mo</span>
+    </div>
+
+    <form method="POST" action="/checkout">
+      <label style="font-size:11px;color:#8E9BAE;font-weight:700;display:block;margin-bottom:6px;">WORK EMAIL ADDRESS</label>
+      <input type="email" name="email" required placeholder="counsel@vanguardlaw.com">
+      
+      <label style="font-size:11px;color:#8E9BAE;font-weight:700;display:block;margin-bottom:6px;">LAW FIRM / ORGANIZATION</label>
+      <input type="text" name="company" required placeholder="Vanguard Commercial Law Group">
+      
+      <button type="submit" class="btn">⚡ Activate 14-Day Free Trial ($499/mo)</button>
+    </form>
+    <a href="/" class="back-link">&larr; Return to Dashboard</a>
+  </div>
+</body>
+</html>
+"""
+
+@app.route("/checkout", methods=["GET", "POST"])
+def checkout():
+    if request.method == "POST":
+        email = request.form.get("email", "counsel@vanguardlaw.com")
+        company = request.form.get("company", "Vanguard Commercial Law Group")
+        logger.info(f"🎉 14-Day Legal Enterprise Trial Activated for {company} ({email})")
+        return f"""
+        <script>
+          alert('🎉 14-DAY LEGAL ENTERPRISE FREE TRIAL ACTIVATED!\\n\\nWelcome {company}!\\nYour AI Legal Auditor is fully unlocked.');
+          window.location.href = '/';
+        </script>
+        """
+    return render_template_string(CHECKOUT_HTML)
 
 if __name__ == "__main__":
     logger.info("⚡ Launching Legal Shield AI Control Hub on port 8096...")
